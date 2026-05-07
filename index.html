@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma Poêle | Wood-Fired Smokehouse</title>
+    
+    <!-- Google Fonts: Playfair Display (Serif) & Inter (Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#ffffff',
+                        dark: '#0a0a0a',
+                        darker: '#111111',
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ffffff; }
+
+        /* Utilities */
+        body { background-color: #0a0a0a; color: #d4d4d8; }
+        .gold-text { color: #ffffff; }
+        .gold-border { border-color: #ffffff; }
+        .bg-gold { background-color: #ffffff; }
+        
+        /* Diamond Divider */
+        .diamond-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            opacity: 0.6;
+        }
+        .diamond-divider::before, .diamond-divider::after {
+            content: '';
+            height: 1px;
+            width: 40px;
+            background-color: #ffffff;
+        }
+        .diamond-icon {
+            width: 6px;
+            height: 6px;
+            background-color: transparent;
+            border: 1px solid #ffffff;
+            transform: rotate(45deg);
+        }
+
+        /* Cart Drawer Animation */
+        #cart-drawer { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .drawer-open { transform: translateX(0) !important; }
+        
+        /* Mobile Menu Animation */
+        #mobile-menu { transition: transform 0.4s ease-in-out; }
+        .menu-open { transform: translateY(0) !important; }
+
+        /* Double border card */
+        .double-border-card {
+            position: relative;
+            padding: 3rem;
+            background-color: #0a0a0a;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+        .double-border-card::before {
+            content: '';
+            position: absolute;
+            top: 8px; left: 8px; right: 8px; bottom: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased overflow-x-hidden selection:bg-gold selection:text-black">
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed w-full z-40 transition-all duration-300 bg-dark/90 backdrop-blur-md border-b border-zinc-900 py-4">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <!-- Logo -->
+            <!-- Logo -->
+<div class="flex flex-col items-center">
+    <img 
+        src="mapoêle.png" 
+        alt="Ma Poêle Logo"
+        class="w-32 md:w-40 object-contain"
+    >
+</div>
+            
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center gap-8 text-xs font-semibold tracking-[0.2em] uppercase text-zinc-400">
+                <a href="#home" class="hover:text-gold transition-colors">Home</a>
+                <a href="#menu" class="hover:text-gold transition-colors">Menus</a>
+                <a href="#reservation" class="hover:text-gold transition-colors">Reservation</a>
+                
+                <button onclick="toggleCart()" class="relative flex items-center gap-2 hover:text-gold transition-colors group">
+                    <i class="ph ph-shopping-bag text-lg"></i>
+                    <span>Order</span>
+                    <span id="cart-badge" class="hidden absolute -top-2 -right-3 bg-gold text-black text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">0</span>
+                </button>
+
+                <a href="#reservation" class="bg-gold text-dark px-8 py-3 hover:bg-white hover:text-dark transition-all duration-300 font-bold ml-4">
+                    FIND A TABLE
+                </a>
+            </div>
+
+            <!-- Mobile Buttons -->
+            <div class="flex md:hidden items-center gap-5">
+                <button onclick="toggleCart()" class="relative gold-text">
+                    <i class="ph ph-shopping-bag text-2xl"></i>
+                    <span id="mobile-cart-badge" class="hidden absolute -top-1 -right-2 bg-white text-black text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">0</span>
+                </button>
+                <button onclick="toggleMobileMenu()" class="gold-text">
+                    <i class="ph ph-list text-3xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay (The "3 lines" fix) -->
+    <div id="mobile-menu" class="fixed inset-0 bg-dark z-30 -translate-y-full flex flex-col items-center justify-center gap-8">
+        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 gold-text">
+            <i class="ph ph-x text-3xl"></i>
+        </button>
+        <a href="#home" onclick="toggleMobileMenu()" class="font-serif text-3xl text-white hover:text-gold transition-colors">Home</a>
+        <a href="#menu" onclick="toggleMobileMenu()" class="font-serif text-3xl text-white hover:text-gold transition-colors">Menus</a>
+        <a href="#reservation" onclick="toggleMobileMenu()" class="font-serif text-3xl text-white hover:text-gold transition-colors">Reservation</a>
+        <button onclick="toggleMobileMenu(); toggleCart();" class="mt-4 border border-gold gold-text px-10 py-4 uppercase tracking-[0.2em] text-sm font-bold hover:bg-gold hover:text-black transition-all">
+            Order Delivery
+        </button>
+    </div>
+
+    <!-- Cart Drawer -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black/70 z-50 hidden transition-opacity opacity-0 backdrop-blur-sm" onclick="toggleCart()"></div>
+    <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full md:w-[450px] bg-darker border-l border-zinc-800 shadow-2xl z-50 translate-x-full flex flex-col">
+        <div class="flex justify-between items-center p-6 border-b border-zinc-800 bg-dark">
+            <h2 class="font-serif text-2xl gold-text">Your Order</h2>
+            <button onclick="toggleCart()" class="text-zinc-500 hover:text-white transition-colors">
+                <i class="ph ph-x text-2xl"></i>
+            </button>
+        </div>
+
+        <div class="flex-grow overflow-y-auto p-6 flex flex-col">
+            <div id="cart-items" class="space-y-6 flex-grow">
+                <!-- Cart items populated by JS -->
+            </div>
+            
+            <div id="empty-cart-msg" class="flex flex-col items-center justify-center h-full text-zinc-500 space-y-4 hidden">
+                <i class="ph ph-shopping-bag text-5xl opacity-50"></i>
+                <p class="tracking-widest uppercase text-sm">Your cart is empty</p>
+                <button onclick="toggleCart(); window.location.href='#menu'" class="gold-text underline tracking-widest uppercase text-xs hover:text-white mt-2">Browse Menu</button>
+            </div>
+
+            <!-- Checkout Section -->
+            <div id="checkout-section" class="border-t border-zinc-800 pt-6 mt-6 hidden">
+                <div class="flex justify-between text-xl font-serif text-white mb-6">
+                    <span>Total</span>
+                    <span class="gold-text"><span id="cart-total">0.00</span> MAD</span>
+                </div>
+
+                <form id="checkout-form" onsubmit="handleCheckout(event)" class="space-y-4">
+                    <h4 class="uppercase tracking-[0.2em] text-xs text-zinc-500 mb-4 flex items-center gap-2">
+                        <span class="h-px bg-zinc-800 flex-grow"></span> Delivery Info <span class="h-px bg-zinc-800 flex-grow"></span>
+                    </h4>
+                    <input type="text" id="cust-name" required placeholder="Full Name" class="w-full bg-zinc-900/50 border border-zinc-800 px-4 py-3 text-sm focus:outline-none focus:border-gold text-white transition-colors">
+                    <input type="tel" id="cust-phone" required placeholder="Phone Number" class="w-full bg-zinc-900/50 border border-zinc-800 px-4 py-3 text-sm focus:outline-none focus:border-gold text-white transition-colors">
+                    <textarea id="cust-address" required placeholder="Delivery Address" rows="2" class="w-full bg-zinc-900/50 border border-zinc-800 px-4 py-3 text-sm focus:outline-none focus:border-gold text-white transition-colors resize-none"></textarea>
+                    
+                    <button type="submit" class="w-full bg-gold text-black font-bold uppercase tracking-widest py-4 mt-4 hover:bg-white transition-colors">
+                        Place Order (WhatsApp)
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden pt-16">
+        <div class="absolute inset-0 bg-dark z-0">
+            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 50% 40%, #ffffff 0%, transparent 50%);"></div>
+        </div>
+        <div class="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center mt-10">
+            <div class="diamond-divider w-full max-w-xs mx-auto mb-4">
+                <div class="diamond-icon"></div>
+            </div>
+            <h2 class="font-serif text-5xl md:text-7xl lg:text-8xl text-white leading-tight mb-6">
+                The Art of <br/>
+                <span class="italic gold-text">Wood-Fired</span> Dining
+            </h2>
+            <p class="text-zinc-400 max-w-2xl mx-auto text-lg mb-10 font-light leading-relaxed">
+                Experience Agadir's finest smokehouse. Immerse yourself in our signature braised octopus, towering charcoal burgers, and artisan pizzas.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-6">
+                <button onclick="toggleCart()" class="border border-gold gold-text px-10 py-4 uppercase tracking-[0.2em] text-sm font-bold hover:bg-gold hover:text-black transition-all duration-300">
+                    Order Delivery
+                </button>
+                <a href="#reservation" class="text-white px-10 py-4 uppercase tracking-[0.2em] text-sm font-bold border border-transparent hover:border-zinc-700 transition-all duration-300">
+                    Book a Table
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-24 bg-dark relative border-t border-zinc-900">
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <p class="gold-text uppercase tracking-[0.3em] text-xs font-bold mb-2">Discover Our</p>
+                <div class="diamond-divider w-full max-w-[150px] mx-auto mb-4"><div class="diamond-icon"></div></div>
+                <h2 class="font-serif text-4xl md:text-5xl text-white">Culinary Menu</h2>
+            </div>
+
+            <!-- Categories -->
+            <div id="menu-categories" class="flex flex-wrap justify-center gap-4 md:gap-8 mb-16 border-b border-zinc-900 pb-2">
+                <!-- Categories populated by JS -->
+            </div>
+
+            <!-- Menu Grid -->
+            <div id="menu-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-12">
+                <!-- Items populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Reservation & Location Section (EXACTLY MATCHING PHOTO) -->
+    <section id="reservation" class="py-24 bg-darker relative border-t border-zinc-900">
+        <div class="max-w-6xl mx-auto px-6">
+            
+            <!-- Headers matching photo exactly -->
+            <div class="text-center mb-12">
+                <p class="gold-text uppercase tracking-[0.3em] text-xs font-bold">RESERVATION</p>
+                <div class="diamond-divider w-full max-w-[200px] mx-auto mb-6"><div class="diamond-icon"></div></div>
+                <h2 class="font-serif text-4xl md:text-5xl text-white mb-6">Book A Table</h2>
+                <p class="text-zinc-400 text-sm font-light max-w-2xl mx-auto leading-relaxed">
+                    Restaurant will be open for all days. Sunday night will be closed. All booking payment is secured with credit card, no charges will be apply for online booking, no refundable.
+                </p>
+            </div>
+
+            <!-- Inline Booking Form matching photo -->
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center mb-20 max-w-4xl mx-auto">
+                <div class="w-full md:w-1/4 border border-zinc-800 bg-dark px-4 py-3 flex items-center">
+                    <i class="ph ph-user text-zinc-500 mr-3"></i>
+                    <select class="w-full bg-transparent text-white focus:outline-none appearance-none text-xs tracking-widest uppercase">
+                        <option value="1" class="bg-darker">1 Person</option>
+                        <option value="2" class="bg-darker">2 People</option>
+                        <option value="4" class="bg-darker">4 People</option>
+                        <option value="6+" class="bg-darker">6+ People</option>
+                    </select>
+                </div>
+                
+                <div class="w-full md:w-1/4 border border-zinc-800 bg-dark px-4 py-3 flex items-center">
+                    <i class="ph ph-calendar text-zinc-500 mr-3"></i>
+                    <input type="date" class="w-full bg-transparent text-white focus:outline-none text-xs tracking-widest uppercase" style="color-scheme: dark;">
+                </div>
+
+                <div class="w-full md:w-1/4 border border-zinc-800 bg-dark px-4 py-3 flex items-center">
+                    <i class="ph ph-clock text-zinc-500 mr-3"></i>
+                    <input type="time" class="w-full bg-transparent text-white focus:outline-none text-xs tracking-widest uppercase" style="color-scheme: dark;">
+                </div>
+
+                <button class="w-full md:w-1/4 bg-gold text-black px-6 py-3 text-xs font-bold tracking-widest uppercase hover:bg-white transition-colors text-center">
+                    BOOK A TABLE
+                </button>
+            </div>
+
+            <!-- Two Column Layout matching photo (Map Left, Card Right) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch max-w-5xl mx-auto">
+                
+                <!-- Fixed Map Embed with correct address & Plus Code -->
+                <div class="h-[400px] lg:h-auto w-full border border-zinc-800 bg-dark relative p-1">
+                    <iframe 
+                        src="https://maps.google.com/maps?q=Ma%20Poêle%20Smoke%20House%20restaurant%20agadir,%20local%2018%20im%20f,%20Rue%20L'h%C3%B4tel%20de%20ville,%20Agadir%2080000&t=&z=18&ie=UTF8&iwloc=&output=embed==&output=embed" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade"
+                        class="grayscale-[20%] contrast-125 opacity-90 hover:opacity-100 hover:grayscale-0 transition-all duration-500"
+                    ></iframe>
+                </div>
+
+                <!-- Elegant Double Border Card -->
+                <div class="double-border-card text-center flex flex-col justify-center items-center">
+                    <p class="gold-text uppercase tracking-[0.3em] text-[10px] font-bold mb-2">MOROCCO</p>
+                    <h3 class="font-serif text-3xl text-white mb-6">Agadir</h3>
+                    
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-1">
+                        local 18 im f, Rue L'hôtel de ville<br>
+                        Agadir 80000
+                    </p>
+                    <p class="text-zinc-400 text-sm mb-6">
+                        Call : +212 679-523257
+                    </p>
+                    
+                    <div class="diamond-divider w-full max-w-[50px] mx-auto mb-6"><div class="diamond-icon"></div></div>
+                    
+                    <div class="space-y-5 w-full">
+                        <div>
+                            <h4 class="text-white font-serif text-lg mb-1">Lunch Time</h4>
+                            <p class="text-zinc-500 text-xs tracking-widest uppercase">Monday to Sunday<br>11:00 am - 4:00 pm</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-serif text-lg mb-1">Dinner Time</h4>
+                            <p class="text-zinc-500 text-xs tracking-widest uppercase">Monday to Sunday<br>6:00 pm - 11:00 pm</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Cleaned Footer -->
+<footer class="bg-dark border-t border-zinc-900 pt-20 pb-10 relative flex flex-col items-center">
+
+    <!-- Logo -->
+    <div class="flex flex-col items-center mb-6">
+        <img 
+            src="mapoêle.png" 
+            alt="Ma Poêle Logo"
+            class="w-40 md:w-52 object-contain"
+        >
+    </div>
+
+    <div class="diamond-divider w-[100px] mb-6">
+        <div class="diamond-icon"></div>
+    </div>
+
+</footer>
+        
+        <!-- Info -->
+        <p class="text-zinc-400 text-sm leading-relaxed mb-6 text-center">
+            local 18 im f, Rue L'hôtel de ville<br/>
+            Agadir 80000, Morocco<br/>
+            Call: +212 679-523257
+        </p>
+
+        <!-- Social Links -->
+        <div class="flex items-center justify-center gap-8 mb-12">
+            <a href="https://www.tripadvisor.com/Restaurant_Review-g293731-d28127651-Reviews-Ma_Poele_Smoke_House_Restaurant_Agadir-Agadir_Souss_Massa.html" class="text-zinc-500 hover:gold-text text-xs tracking-[0.2em] uppercase transition-colors">TripAdvisor</a>
+            <a href="https://www.instagram.com/mapoele.agadir/" class="text-zinc-500 hover:gold-text text-xs tracking-[0.2em] uppercase transition-colors">Instagram</a>
+            <a href="https://maps.app.goo.gl/JnuNJpp5ZUcje9Po7" class="text-zinc-500 hover:gold-text text-xs tracking-[0.2em] uppercase transition-colors">Google Map</a>
+        </div>
+
+        <!-- Bottom Line -->
+        <div class="w-full max-w-6xl mx-auto px-6 border-t border-zinc-900 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-zinc-600 text-xs tracking-widest uppercase">© 2026 Ma Poêle. All Rights Reserved.</p>
+            <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="mt-4 md:mt-0 w-10 h-10 bg-darker border border-zinc-800 flex items-center justify-center gold-text hover:bg-gold hover:text-black transition-colors rounded-full">
+                <i class="ph ph-caret-up text-lg"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] transition-all duration-300 transform translate-y-12 opacity-0 pointer-events-none">
+        <div class="bg-darker border border-gold text-white px-6 py-3 rounded-full flex items-center gap-3 shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+            <i class="ph ph-check-circle text-gold text-lg"></i>
+            <span id="toast-msg" class="text-sm tracking-wide">Item added</span>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // --- DATA ---
+        const MENU_DATA = [
+            { id: "cat_1", category: "Charcoal Burger", items: [
+                { id: "item_1_1", name: "Ma Poêle Burger", price: 120.00, currency: "MAD", description: "Steak haché, poulet croustillant, jambon fumé, oignons rings, laitue, tomate, oignons, cornichons, fromage cheddar, sauce burger, servi avec frites" },
+                { id: "item_1_2", name: "Américain Burger", price: 90.00, currency: "MAD", description: "Steak haché, oignons rings, jambon, laitue, tomate, oignons, cornichons, fromage cheddar sauce burger, servi avec frites" },
+                { id: "item_1_3", name: "Chicken Burger", price: 60.00, currency: "MAD", description: "Poulet croustillant, laitue, tomate, oignons, cornichons, fromage cheddar sauce burger, servi avec frites" },
+                { id: "item_1_4", name: "Cheese Burger", price: 60.00, currency: "MAD", description: "Steak haché, laitue, tomate, oignons, cornichons, fromage cheddar, sauce burger, servi avec frites" },
+                { id: "item_1_5", name: "Les Top Burger", price: 195.00, currency: "MAD", description: "Savourez 4 burgers grillés au charbon de bois avec nos saveurs uniques." }
+            ]},
+            { id: "cat_4", category: "Les Plats", items: [
+                { id: "item_4_1", name: "Terre & Mer", price: 180.00, currency: "MAD", description: "Brochettes kefta et poulet au feu de bois, poulple braisé. Accompagné de riz basmati, frites, salade, purée." },
+                { id: "item_4_2", name: "Poulpe Braisé", price: 150.00, currency: "MAD", description: "Poulpe fumé au feu de bois. Accompagné de riz basmati, frites, salade, purée." },
+                { id: "item_4_3", name: "Brochettes Kefta", price: 120.00, currency: "MAD", description: "Brochettes kefta au feu de bois." },
+                { id: "item_4_4", name: "Brochettes Poulet", price: 105.00, currency: "MAD", description: "Brochettes de poulet au feu de bois." },
+                { id: "item_4_5", name: "Émincé De Poulet Aux Champignons", price: 100.00, currency: "MAD", description: "Emincé de poulet au feu de bois, champignons." }
+            ]},
+            { id: "cat_5", category: "Pizzas", items: [
+                { id: "item_5_1", name: "Pizza 4 Saisons", price: 120.00, currency: "MAD", description: "Sauce tomate, mozzarella, fruit de mer, thon, viande hachée, poulet" },
+                { id: "item_5_2", name: "Pizza Fruits De Mer", price: 105.00, currency: "MAD", description: "Sauce tomate, mozzarella, persil, calamars, crevettes" },
+                { id: "item_5_5", name: "Pizza 4 Fromages", price: 90.00, currency: "MAD", description: "Sauce tomate, mozzarella, edam, parmesan, roquefort" },
+                { id: "item_5_8", name: "Pizza Végétarienne", price: 75.00, currency: "MAD", description: "Sauce tomate, mozzarella, légumes grillés" },
+                { id: "item_5_9", name: "Pizza Margherita", price: 60.00, currency: "MAD", description: "Sauce tomate, mozzarella, olive noire" }
+            ]},
+            { id: "cat_6", category: "Pasta", items: [
+                { id: "item_6_1", name: "Pêcheur", price: 90.00, currency: "MAD", description: "Sauce blanche, fruits de mer, champignons" },
+                { id: "item_6_2", name: "Carbonara", price: 70.00, currency: "MAD", description: "Sauce blanche, jambon fumé, champignons" },
+                { id: "item_6_3", name: "Forestier", price: 70.00, currency: "MAD", description: "Sauce blanche, champignons, poulet, fromage" },
+                { id: "item_6_4", name: "Bolognaise", price: 70.00, currency: "MAD", description: "Sauce tomate, viande hachée, fromage, basilic" }
+            ]},
+            { id: "cat_3", category: "Salades", items: [
+                { id: "item_3_1", name: "Salade Sea Food", price: 105.00, currency: "MAD", description: "Laitue, tomate cerise, concombre, betterave, courgette grillée, champignons, riz, crevettes, sépia, poulpe" },
+                { id: "item_3_2", name: "Salade Pouple", price: 105.00, currency: "MAD", description: "Laitue, tomate cerise, concombre, betterave, courgette grillée, poulpe fumé" },
+                { id: "item_3_3", name: "Guacamole D'Avocat", price: 75.00, currency: "MAD", description: "Avocat, crevettes" }
+            ]},
+            { id: "cat_2", category: "Jus", items: [
+                { id: "item_2_2", name: "Fraîche Détox", price: 40.00, currency: "MAD", description: "Betterave, gingembre, orange, pomme" },
+                { id: "item_2_3", name: "Green Détox", price: 40.00, currency: "MAD", description: "Épinard, gingembre, orange, pomme" },
+                { id: "item_2_4", name: "Jus D'orange", price: 30.00, currency: "MAD", description: "Orange" }
+            ]}
+        ];
+
+        // --- STATE ---
+        let activeCategory = MENU_DATA[0].id;
+        let cart = [];
+        let isCartOpen = false;
+        let isMobileMenuOpen = false;
+
+        // --- RENDER MENU ---
+        function renderMenu() {
+            const catContainer = document.getElementById('menu-categories');
+            const gridContainer = document.getElementById('menu-grid');
+            
+            // Render Categories
+            catContainer.innerHTML = MENU_DATA.map(cat => `
+                <button onclick="changeCategory('${cat.id}')" 
+                    class="uppercase tracking-[0.2em] text-xs md:text-sm py-2 px-4 transition-all duration-300 border-b-2 ${activeCategory === cat.id ? 'border-gold gold-text' : 'border-transparent text-zinc-500 hover:text-white'}">
+                    ${cat.category}
+                </button>
+            `).join('');
+
+            // Render Items
+            const activeData = MENU_DATA.find(c => c.id === activeCategory);
+            if(activeData) {
+                gridContainer.innerHTML = activeData.items.map(item => `
+                    <div class="group relative bg-darker p-6 border border-zinc-900 hover:border-gold/50 transition-all duration-500">
+                        <div class="flex justify-between items-start mb-3 gap-4">
+                            <h4 class="font-serif text-xl text-white group-hover:gold-text transition-colors">${item.name}</h4>
+                            <div class="text-right">
+                                <span class="text-lg gold-text font-semibold whitespace-nowrap">${item.price} ${item.currency}</span>
+                            </div>
+                        </div>
+                        <p class="text-zinc-500 text-sm leading-relaxed mb-6 font-light pr-8">${item.description}</p>
+                        <button onclick='addToCart(${JSON.stringify(item).replace(/'/g, "&#39;")})' 
+                            class="absolute bottom-6 right-6 flex items-center gap-2 text-xs uppercase tracking-widest text-zinc-400 hover:gold-text transition-colors">
+                            <span>Add</span>
+                            <div class="w-8 h-8 rounded-full border border-zinc-700 group-hover:border-gold flex items-center justify-center transition-colors">
+                                <i class="ph ph-plus"></i>
+                            </div>
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function changeCategory(id) {
+            activeCategory = id;
+            renderMenu();
+        }
+
+        // --- CART LOGIC ---
+        function toggleCart() {
+            isCartOpen = !isCartOpen;
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-overlay');
+            
+            if (isCartOpen) {
+                drawer.classList.add('drawer-open');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            } else {
+                drawer.classList.remove('drawer-open');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function toggleMobileMenu() {
+            isMobileMenuOpen = !isMobileMenuOpen;
+            const menu = document.getElementById('mobile-menu');
+            if (isMobileMenuOpen) {
+                menu.classList.add('menu-open');
+            } else {
+                menu.classList.remove('menu-open');
+            }
+        }
+
+        function addToCart(item) {
+            const existing = cart.find(c => c.item.id === item.id);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ item, quantity: 1 });
+            }
+            updateCartUI();
+            showToast(`Added ${item.name}`);
+        }
+
+        function updateQuantity(id, delta) {
+            const index = cart.findIndex(c => c.item.id === id);
+            if (index !== -1) {
+                cart[index].quantity += delta;
+                if (cart[index].quantity <= 0) cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartItemsDiv = document.getElementById('cart-items');
+            const emptyMsg = document.getElementById('empty-cart-msg');
+            const checkoutSec = document.getElementById('checkout-section');
+            const totalSpan = document.getElementById('cart-total');
+            
+            // Badges
+            const count = cart.reduce((sum, c) => sum + c.quantity, 0);
+            const badges = [document.getElementById('cart-badge'), document.getElementById('mobile-cart-badge')];
+            badges.forEach(b => {
+                if(b) {
+                    b.innerText = count;
+                    if(count > 0) b.classList.remove('hidden');
+                    else b.classList.add('hidden');
+                }
+            });
+
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = '';
+                emptyMsg.classList.remove('hidden');
+                checkoutSec.classList.add('hidden');
+            } else {
+                emptyMsg.classList.add('hidden');
+                checkoutSec.classList.remove('hidden');
+                
+                let total = 0;
+                cartItemsDiv.innerHTML = cart.map(c => {
+                    total += (c.item.price * c.quantity);
+                    return `
+                    <div class="flex justify-between gap-4 border-b border-zinc-900 pb-4">
+                        <div class="flex-grow">
+                            <h4 class="text-white font-serif text-lg leading-tight mb-1">${c.item.name}</h4>
+                            <p class="gold-text text-sm">${c.item.price} ${c.item.currency}</p>
+                        </div>
+                        <div class="flex items-center gap-3 border border-zinc-700 rounded-full px-3 h-8">
+                            <button type="button" onclick="updateQuantity('${c.item.id}', -1)" class="text-zinc-400 hover:text-white"><i class="ph ph-minus"></i></button>
+                            <span class="text-white w-4 text-center text-sm">${c.quantity}</span>
+                            <button type="button" onclick="updateQuantity('${c.item.id}', 1)" class="text-zinc-400 hover:text-white"><i class="ph ph-plus"></i></button>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+                
+                totalSpan.innerText = total.toFixed(2);
+            }
+        }
+
+        // --- WHATSAPP ORDERING ---
+        function handleCheckout(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const address = document.getElementById('cust-address').value;
+            
+            if(cart.length === 0) return;
+
+            let total = 0;
+            let orderText = `*NOUVELLE COMMANDE - Ma Poêle*\n\n`;
+            orderText += `*Client:* ${name}\n`;
+            orderText += `*Téléphone:* ${phone}\n`;
+            orderText += `*Adresse:* ${address}\n\n`;
+            orderText += `*Détails de la commande:*\n`;
+            
+            cart.forEach(c => {
+                const lineTotal = c.item.price * c.quantity;
+                total += lineTotal;
+                orderText += `- ${c.quantity}x ${c.item.name} (${lineTotal} MAD)\n`;
+            });
+            
+            orderText += `\n*TOTAL: ${total.toFixed(2)} MAD*`;
+            
+            const encodedText = encodeURIComponent(orderText);
+            const whatsappUrl = `https://wa.me/212679523257?text=${encodedText}`;
+            
+            // Open WhatsApp
+            window.open(whatsappUrl, '_blank');
+            
+            // Reset
+            cart = [];
+            updateCartUI();
+            e.target.reset();
+            toggleCart();
+            showToast("Redirecting to WhatsApp...");
+        }
+
+        // --- UTILS ---
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('translate-y-12', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-12', 'opacity-0');
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMenu();
+            updateCartUI();
+        });
+    </script>
+</body>
+</html>
