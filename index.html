@@ -247,42 +247,130 @@
     <section id="reservation" class="py-24 bg-darker relative border-t border-zinc-900">
         <div class="max-w-6xl mx-auto px-6">
             
-            <!-- Headers matching photo exactly -->
-            <div class="text-center mb-12">
-                <p class="gold-text uppercase tracking-[0.3em] text-xs font-bold">RESERVATION</p>
-                <div class="diamond-divider w-full max-w-[200px] mx-auto mb-6"><div class="diamond-icon"></div></div>
-                <h2 class="font-serif text-4xl md:text-5xl text-white mb-6">Book A Table</h2>
-                <p class="text-zinc-400 text-sm font-light max-w-2xl mx-auto leading-relaxed">
-                    Restaurant will be open for all days. Sunday night will be closed. All booking payment is secured with credit card, no charges will be apply for online booking, no refundable.
-                </p>
-            </div>
+            <!-- Headers -->
+<div class="text-center mb-12">
+    <p class="gold-text uppercase tracking-[0.3em] text-xs font-bold">RESERVATION</p>
 
-            <!-- Inline Booking Form matching photo -->
-            <div class="flex flex-col md:flex-row gap-4 justify-center items-center mb-20 max-w-4xl mx-auto">
-                <div class="w-full md:w-1/4 border border-zinc-800 bg-dark px-4 py-3 flex items-center">
-                    <i class="ph ph-user text-zinc-500 mr-3"></i>
-                    <select class="w-full bg-transparent text-white focus:outline-none appearance-none text-xs tracking-widest uppercase">
-                        <option value="1" class="bg-darker">1 Person</option>
-                        <option value="2" class="bg-darker">2 People</option>
-                        <option value="4" class="bg-darker">4 People</option>
-                        <option value="6+" class="bg-darker">6+ People</option>
-                    </select>
-                </div>
-                
-                <div class="w-full md:w-1/4 border border-zinc-800 bg-dark px-4 py-3 flex items-center">
-                    <i class="ph ph-calendar text-zinc-500 mr-3"></i>
-                    <input type="date" class="w-full bg-transparent text-white focus:outline-none text-xs tracking-widest uppercase" style="color-scheme: dark;">
-                </div>
+    <div class="diamond-divider w-full max-w-[200px] mx-auto mb-6">
+        <div class="diamond-icon"></div>
+    </div>
 
-                <div class="w-full md:w-1/4 border border-zinc-800 bg-dark px-4 py-3 flex items-center">
-                    <i class="ph ph-clock text-zinc-500 mr-3"></i>
-                    <input type="time" class="w-full bg-transparent text-white focus:outline-none text-xs tracking-widest uppercase" style="color-scheme: dark;">
-                </div>
+    <h2 class="font-serif text-4xl md:text-5xl text-white mb-6">
+        Book A Table
+    </h2>
 
-                <button class="w-full md:w-1/4 bg-gold text-black px-6 py-3 text-xs font-bold tracking-widest uppercase hover:bg-white transition-colors text-center">
-                    BOOK A TABLE
-                </button>
-            </div>
+    <p class="text-zinc-400 text-sm font-light max-w-2xl mx-auto leading-relaxed">
+        Reserve your table quickly through WhatsApp. Fill in your details below and our team will confirm your reservation as soon as possible.
+    </p>
+</div>
+
+<!-- Booking Form -->
+<div class="max-w-5xl mx-auto">
+    <form id="bookingForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <!-- Name -->
+        <div class="border border-zinc-800 bg-dark px-4 py-3 flex items-center">
+            <i class="ph ph-user text-zinc-500 mr-3"></i>
+
+            <input 
+                type="text"
+                id="name"
+                placeholder="Your Name"
+                class="w-full bg-transparent text-white focus:outline-none text-xs tracking-widest uppercase"
+                required
+            >
+        </div>
+
+        <!-- Phone -->
+        <div class="border border-zinc-800 bg-dark px-4 py-3 flex items-center">
+            <i class="ph ph-phone text-zinc-500 mr-3"></i>
+
+            <input 
+                type="tel"
+                id="phone"
+                placeholder="Phone Number"
+                class="w-full bg-transparent text-white focus:outline-none text-xs tracking-widest uppercase"
+                required
+            >
+        </div>
+
+        <!-- People -->
+        <div class="border border-zinc-800 bg-dark px-4 py-3 flex items-center">
+            <i class="ph ph-users text-zinc-500 mr-3"></i>
+
+            <select 
+                id="people"
+                class="w-full bg-transparent text-white focus:outline-none appearance-none text-xs tracking-widest uppercase"
+            >
+                <option value="1" class="bg-darker">1 Person</option>
+                <option value="2" class="bg-darker">2 People</option>
+                <option value="4" class="bg-darker">4 People</option>
+                <option value="6+" class="bg-darker">6+ People</option>
+            </select>
+        </div>
+
+        <!-- Date -->
+        <div class="border border-zinc-800 bg-dark px-4 py-3 flex items-center">
+            <i class="ph ph-calendar text-zinc-500 mr-3"></i>
+
+            <input 
+                type="date"
+                id="date"
+                class="w-full bg-transparent text-white focus:outline-none text-xs tracking-widest uppercase"
+                style="color-scheme: dark;"
+                required
+            >
+        </div>
+
+        <!-- Time -->
+        <div class="border border-zinc-800 bg-dark px-4 py-3 flex items-center">
+            <i class="ph ph-clock text-zinc-500 mr-3"></i>
+
+            <input 
+                type="time"
+                id="time"
+                class="w-full bg-transparent text-white focus:outline-none text-xs tracking-widest uppercase"
+                style="color-scheme: dark;"
+                required
+            >
+        </div>
+
+        <!-- Button -->
+        <button 
+            type="submit"
+            class="bg-gold text-black px-6 py-3 text-xs font-bold tracking-widest uppercase hover:bg-white transition-colors"
+        >
+            BOOK ON WHATSAPP
+        </button>
+
+    </form>
+</div>
+
+<script>
+document.getElementById("bookingForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const phone = document.getElementById("phone").value;
+    const people = document.getElementById("people").value;
+    const date = document.getElementById("date").value;
+    const time = document.getElementById("time").value;
+
+    const message = `🍽️ Table Reservation Request
+
+👤 Name: ${name}
+📞 Phone: ${phone}
+👥 Guests: ${people}
+📅 Date: ${date}
+⏰ Time: ${time}
+
+Hello, I would like to reserve a table at Ma Poêle.`;
+
+    const whatsappURL = `https://wa.me/212679523257?text=${encodeURIComponent(message)}`;
+
+    window.open(whatsappURL, "_blank");
+});
+</script>
 
             <!-- Two Column Layout matching photo (Map Left, Card Right) -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch max-w-5xl mx-auto">
